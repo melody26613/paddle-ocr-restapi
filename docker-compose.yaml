@@ -1,0 +1,32 @@
+---
+version: '3.8'
+services:
+  paddle_ocr_restapi:
+    image: paddle_ocr_restapi:latest
+    container_name: paddle_ocr_restapi
+    restart: unless-stopped
+
+    volumes:
+      - ./log:/home/PaddleOCR/log
+
+    privileged: true
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+
+    ports:
+      - 20000:20000
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python -m restapi.paddle_ocr_restapi \
+          --host 0.0.0.0 \
+          --port 20000 \
+          --lang japan
