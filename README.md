@@ -7,8 +7,14 @@ docker build -t paddle_ocr_restapi:latest -f Dockerfile .
 ```
 
 ### Run Docker Container from Docker Image
+* modify host, port and source language in docker-compose.yaml
 ```bash
+# default --host 0.0.0.0
+# default --port 20000
+# default --lang japan
+
 docker compose up -d
+
 # check log under log/ folder
 ```
 
@@ -34,3 +40,7 @@ curl -X POST "http://localhost:20000/ocr/dict" \
 	}
 ]
 ```
+
+## References
+* [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
+* [PaddleOCR-API](https://github.com/m986883511/PaddleOCR-API)
