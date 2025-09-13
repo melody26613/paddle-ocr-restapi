@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paddleocr-env
+data:
+  CONTAINER_API_PORT: "8000"
+  LANG: "japan"
+  API_LOG: "/app/api_vision/log/api.log"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paddleocr
+  labels:
+    app: paddleocr
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paddleocr
+  template:
+    metadata:
+      labels:
+        app: paddleocr
+    spec:
+      containers:
+        - name: paddleocr
+          image: paddle_ocr_restapi:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              python -m restapi.paddle_ocr_restapi \
+                --host 0.0.0.0 \
+                --port ${CONTAINER_API_PORT} \
+                --lang ${LANG}
+          envFrom:
+            - configMapRef:
+                name: paddleocr-env
+          env:
+            - name: CUDA_VISIBLE_DEVICES
+              value: "0"  # manually assign GPU 0 for all pods
+          volumeMounts:
+            - name: log-volume
+              mountPath: /home/PaddleOCR/log
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+              # nvidia.com/gpu: 1 # this config is one pod for one GPU
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+              # nvidia.com/gpu: 1 # this config is one pod for one GPU
+      restartPolicy: Always
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /var/log/ai/paddleocr
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paddleocr-service
+spec:
+  selector:
+    app: paddleocr
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 20000
+      targetPort: 8000

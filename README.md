@@ -27,6 +27,8 @@ curl -X POST "http://localhost:20000/ocr/dict" \
 ```
 
 * response
+
+with coordinates [x1, y1], [x2, y2], [x3, y3], [x4, y4]
 ```json
 [
 	{
