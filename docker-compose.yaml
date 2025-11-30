@@ -10,7 +10,11 @@ services:
       - ./log:/home/PaddleOCR/log
 
     privileged: true
-    runtime: nvidia
+
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
     deploy:
       resources:
         reservations:
