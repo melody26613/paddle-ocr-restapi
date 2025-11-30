@@ -161,7 +161,7 @@ if __name__ == "__main__":
     parser.add_argument("--host", type=str, default="localhost")
     parser.add_argument("--port", type=int, default=20000)
     parser.add_argument("--lang", type=str, default="japan")
-    parser.add_argument("--use_gpu", type=bool, default=True)
+    parser.add_argument("--use_gpu", action="store_true")
     args = parser.parse_args()
 
     logger.info("args=" + str(args))
