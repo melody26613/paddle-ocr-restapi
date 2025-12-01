@@ -163,6 +163,7 @@ if __name__ == "__main__":
         use_textline_orientation=args.use_textline_orientation,
         text_det_limit_side_len=args.text_det_limit_side_len,
         text_det_limit_type=args.text_det_limit_type,
+        use_doc_unwarping=False,
     )
 
     uvicorn.run(app, host=args.host, port=args.port)
